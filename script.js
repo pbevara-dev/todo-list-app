@@ -1,51 +1,56 @@
 const taskInput = document.getElementById('task-input');
 const taskDateInput = document.getElementById('task-date');
 const addTaskButton = document.getElementById('add-task');
-const taskList = document.getElementById('task-list');
+const taskGrid = document.getElementById('task-grid');
 
 // Load tasks from LocalStorage
 const loadTasks = () => {
     const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    tasks.forEach(task => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${task.text} (Due: ${task.date || 'No date'})`;
-        if (task.done) listItem.classList.add('done');
-        addDeleteButton(listItem);
-        listItem.addEventListener('click', () => toggleTask(listItem, task.text));
-        taskList.appendChild(listItem);
-    });
+    tasks.forEach(task => addTaskCard(task.text, task.date, task.done));
 };
 
 // Save tasks to LocalStorage
 const saveTasks = () => {
-    const tasks = Array.from(taskList.children).map(item => {
-        const [text, dueDatePart] = item.textContent.split(' (Due: ');
-        const date = dueDatePart ? dueDatePart.replace(')', '') : '';
-        return {
-            text: text.trim(),
-            date: date.trim(),
-            done: item.classList.contains('done'),
-        };
-    });
+    const tasks = Array.from(taskGrid.children).map(card => ({
+        text: card.querySelector('.task-text').textContent,
+        date: card.querySelector('.task-date').textContent.replace('Due: ', ''),
+        done: card.classList.contains('done'),
+    }));
     localStorage.setItem('tasks', JSON.stringify(tasks));
 };
 
-// Toggle task completion
-const toggleTask = (listItem) => {
-    listItem.classList.toggle('done');
-    saveTasks();
-};
+// Add a task card
+const addTaskCard = (task, date, done = false) => {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    if (done) card.classList.add('done');
 
-// Add delete button to a task
-const addDeleteButton = (listItem) => {
+    const taskText = document.createElement('div');
+    taskText.textContent = task;
+    taskText.className = 'task-text';
+
+    const taskDate = document.createElement('div');
+    taskDate.textContent = `Due: ${date || 'No date'}`;
+    taskDate.className = 'task-date';
+
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
-    deleteButton.style.marginLeft = '10px';
     deleteButton.addEventListener('click', () => {
-        listItem.remove();
+        card.remove();
         saveTasks();
     });
-    listItem.appendChild(deleteButton);
+
+    card.appendChild(taskText);
+    card.appendChild(taskDate);
+    card.appendChild(deleteButton);
+
+    card.addEventListener('click', () => {
+        card.classList.toggle('done');
+        saveTasks();
+    });
+
+    taskGrid.appendChild(card);
+    saveTasks();
 };
 
 // Add a new task
@@ -53,14 +58,9 @@ addTaskButton.addEventListener('click', () => {
     const task = taskInput.value.trim();
     const dueDate = taskDateInput.value;
     if (task) {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${task} (Due: ${dueDate || 'No date'})`;
-        addDeleteButton(listItem);
-        listItem.addEventListener('click', () => toggleTask(listItem));
-        taskList.appendChild(listItem);
+        addTaskCard(task, dueDate);
         taskInput.value = '';
         taskDateInput.value = '';
-        saveTasks();
     }
 });
 
