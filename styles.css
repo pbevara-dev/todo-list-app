@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background: #f1f3f4;
+    background: #f4f7fc;
     color: #202124;
     margin: 0;
     padding: 0;
@@ -12,7 +12,8 @@ body {
 h1 {
     margin: 20px;
     font-size: 2rem;
-    color: #5f6368;
+    color: #333;
+    text-align: center;
 }
 
 .container {
@@ -61,13 +62,25 @@ h1 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 100px;
+    min-height: 150px;
 }
 
 .task-card.done {
     background: #e8f0fe;
     text-decoration: line-through;
     color: #5f6368;
+}
+
+.task-note {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #555;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    height: 60px;
+    resize: none;
+    background: #fafafa;
 }
 
 .task-card button {
@@ -82,4 +95,12 @@ h1 {
 
 .task-card button:hover {
     background: #b71c1c;
+}
+
+body {
+    background: linear-gradient(135deg, #67b26f 0%, #4ca2cd 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
